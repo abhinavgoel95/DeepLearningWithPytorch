@@ -8,7 +8,8 @@ class Conv2D:
 		self.kernel_size = kernel_size
 		self.stride = stride
 		self.mode = mode
-		self.kernel = np.ones(shape = [in_channel, kernel_size, kernel_size, o_channel])
+		x = [[1,1, 1],[0,0,0],[-1,-1,-1]] 
+		self.kernel = np.asarray(x).reshape([in_channel,kernel_size, kernel_size, o_channel])
 
 	def forward(self, input_image):
 		c, h, w = input_image.shape
@@ -24,9 +25,9 @@ class Conv2D:
 				while j in range(w):
 					conv[y][i][j] = (self.kernel[:,:,:,y] * img[:, i : i + self.kernel_size, j : j + self.kernel_size]).sum()
 					j += self.stride
+					print(j, w)
 				i += self.stride
 			ims.append(conv)
-			print("Good?")
 		out_conv = np.stack(ims, axis=2).astype("float32").reshape(self.o_channel,h,w)
 
 		return out_conv
