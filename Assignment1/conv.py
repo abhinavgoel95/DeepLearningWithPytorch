@@ -10,7 +10,7 @@ class Conv2D:
 		self.mode = mode
 		x = [[1,1, 1],[0,0,0],[-1,-1,-1]] 
 		self.kernel = np.asarray(x).reshape([in_channel,kernel_size, kernel_size, o_channel])
-
+"""
 	def forward(self, input_image):
 		c, h, w = input_image.shape
 		out_conv = []
@@ -31,7 +31,7 @@ class Conv2D:
 		out_conv = np.stack(ims, axis=2).astype("float32").reshape(self.o_channel,h,w)
 
 		return out_conv
-		
+"""
 
 
 """
