@@ -10,28 +10,56 @@ class Conv2D:
 		self.mode = mode
 		x = [[1,1, 1],[0,0,0],[-1,-1,-1]] 
 		self.kernel = np.asarray(x).reshape([in_channel,kernel_size, kernel_size, o_channel])
-"""
+
+	# def forward(self, input_image):
+	# 	c, h, w = input_image.shape
+	# 	out_conv = []
+	# 	conv = np.zeros(shape = [self.o_channel, int(h/self.stride), int(w/self.stride)])
+	# 	img = np.zeros((c, h + 2*int(self.kernel_size/2), w + 2*int(self.kernel_size/2)))
+	# 	img[:, int(self.kernel_size/2): -int(self.kernel_size/2), int(self.kernel_size/2): -int(self.kernel_size/2)] = input_image
+	# 	for y in range(self.o_channel):
+	# 		ims = []
+	# 		i = 0
+	# 		while i in range(h):
+	# 			j = 0
+	# 			while j in range(w):
+	# 				conv[y][i][j] = (self.kernel[:,:,:,y] * img[:, i : i + self.kernel_size, j : j + self.kernel_size]).sum()
+	# 				j += self.stride
+	# 				print(j, w)
+	# 			i += self.stride
+	# 		ims.append(conv)
+	# 	out_conv = np.stack(ims, axis=2).astype("float32").reshape(self.o_channel,h,w)
+
+	# 	return out_conv
+
+
 	def forward(self, input_image):
 		c, h, w = input_image.shape
 		out_conv = []
-		conv = np.zeros(shape = [self.o_channel, int(h/self.stride), int(w/self.stride)])
-		img = np.zeros((c, h + 2*int(self.kernel_size/2), w + 2*int(self.kernel_size/2)))
-		img[:, int(self.kernel_size/2): -int(self.kernel_size/2), int(self.kernel_size/2): -int(self.kernel_size/2)] = input_image
+		conv = np.zeros(shape = [self.o_channel, int((h-self.kernel_size)/self.stride) + 1, int((w - self.kernel_size)/self.stride) + 1])
+		startx = int(self.kernel_size/2)
+		starty = int(self.kernel_size/2)
+		endx = w - int(self.kernel_size/2)
+		endy = h - int(self.kernel_size/2)
+		num_op = 0
 		for y in range(self.o_channel):
 			ims = []
+			m = 0
 			i = 0
-			while i in range(h):
+			while i+self.kernel_size < h:
+				n = 0
 				j = 0
-				while j in range(w):
-					conv[y][i][j] = (self.kernel[:,:,:,y] * img[:, i : i + self.kernel_size, j : j + self.kernel_size]).sum()
-					j += self.stride
-					print(j, w)
-				i += self.stride
+				while j+self.kernel_size < w:
+					conv[y][m][n] = (self.kernel[:,:,:,y] * input_image[:, i : i + self.kernel_size, j : j + self.kernel_size]).sum()
+					num_op += self.kernel_size * self.kernel_size * self.in_channel * 2 #for multiplication + addition
+					n+=1
+					j+=self.stride
+				m+=1
+				i+=self.stride
 			ims.append(conv)
-		out_conv = np.stack(ims, axis=2).astype("float32").reshape(self.o_channel,h,w)
+		out_conv = np.stack(ims, axis=2).astype("float32").reshape(self.o_channel,int((h-self.kernel_size)/self.stride) + 1, int((w-self.kernel_size)/self.stride) + 1)
+		return num_op, out_conv
 
-		return out_conv
-"""
 
 
 """
