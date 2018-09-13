@@ -1,4 +1,6 @@
 import torch as t
+import numpy as np
+
 class NeuralNetwork:
 	def __init__(self, inps):
 		self.in1 = inps[0]
